@@ -1,4 +1,4 @@
-# 沙漠
+# 「沙漠」: SHA(mo)256 
 
 > the hashed desert
 
