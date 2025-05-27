@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="MovementState" load_steps=2 format=3 uid="uid://mtgu0crf6k0n"]
+
+[ext_resource type="Script" uid="uid://b8ga2l2m0po2v" path="res://entities/player/movement_state.gd" id="1_jvdgp"]
+
+[resource]
+script = ExtResource("1_jvdgp")
+id = 2
+speed = 12.0
+acceleration = 5.0
+camera_fov = 90.0
+metadata/_custom_type_script = "uid://b8ga2l2m0po2v"

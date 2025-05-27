@@ -1,0 +1,179 @@
+[gd_scene load_steps=20 format=3 uid="uid://gbybg78jk1ob"]
+
+[ext_resource type="PackedScene" uid="uid://gweoxk8gt2rx" path="res://models/character.glb" id="1_3vyb7"]
+[ext_resource type="Script" uid="uid://vt7d7o8dmlfu" path="res://entities/player/camera_controller.gd" id="1_g2els"]
+[ext_resource type="Script" uid="uid://dwulhp7veht3j" path="res://entities/player/player.gd" id="1_smehm"]
+[ext_resource type="Resource" uid="uid://bouvmciuwyy4w" path="res://entities/player/movement_states/idle.tres" id="2_ur7pv"]
+[ext_resource type="Resource" uid="uid://k2d8jnmyh5k6" path="res://entities/player/movement_states/walk.tres" id="3_y4r1p"]
+[ext_resource type="Resource" uid="uid://mtgu0crf6k0n" path="res://entities/player/movement_states/run.tres" id="4_smehm"]
+[ext_resource type="Script" uid="uid://bjn5dalbygsu2" path="res://entities/player/movement_controller.gd" id="7_jej6c"]
+[ext_resource type="Script" uid="uid://brk4wp2yoaox1" path="res://entities/player/animation_controller.gd" id="8_ur7pv"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_g2els"]
+radius = 0.07
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_smehm"]
+albedo_color = Color(0, 0, 0, 1)
+metallic = 0.75
+metallic_specular = 0.95
+roughness = 0.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ur7pv"]
+albedo_color = Color(0.552941, 0.517647, 0.823529, 1)
+metallic = 0.75
+metallic_specular = 1.0
+roughness = 0.3
+emission = Color(0.552941, 0.517647, 0.823529, 1)
+
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_y4r1p"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_d2wvv"]
+animation = &"Idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_f1ej7"]
+animation = &"Sprint"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fjrip"]
+animation = &"Walk"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_smehm"]
+animation = &"Sprint"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_qfm1y"]
+blend_point_0/node = SubResource("AnimationNodeAnimation_d2wvv")
+blend_point_0/pos = 0.0
+blend_point_1/node = SubResource("AnimationNodeAnimation_f1ej7")
+blend_point_1/pos = 3.0
+blend_point_2/node = SubResource("AnimationNodeAnimation_fjrip")
+blend_point_2/pos = 1.0
+blend_point_3/node = SubResource("AnimationNodeAnimation_smehm")
+blend_point_3/pos = 2.0
+min_space = 0.0
+max_space = 2.0
+snap = 1.0
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_fulsm"]
+graph_offset = Vector2(-215, 148)
+nodes/movement_anim_speed/node = SubResource("AnimationNodeTimeScale_y4r1p")
+nodes/movement_anim_speed/position = Vector2(140, 160)
+nodes/movement_blend/node = SubResource("AnimationNodeBlendSpace1D_qfm1y")
+nodes/movement_blend/position = Vector2(-120, 160)
+nodes/output/position = Vector2(500, 180)
+node_connections = [&"movement_anim_speed", 0, &"movement_blend", &"output", 0, &"movement_anim_speed"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_3vyb7"]
+
+[node name="Player" type="CharacterBody3D"]
+script = ExtResource("1_smehm")
+movement_states = {
+"idle": ExtResource("2_ur7pv"),
+"run": ExtResource("4_smehm"),
+"walk": ExtResource("3_y4r1p")
+}
+
+[node name="CameraController" type="Node3D" parent="." node_paths=PackedStringArray("player")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
+script = ExtResource("1_g2els")
+player = NodePath("..")
+
+[node name="Yaw" type="Node3D" parent="CameraController"]
+
+[node name="Pitch" type="Node3D" parent="CameraController/Yaw"]
+transform = Transform3D(1, 0, 0, 0, 0.984808, -0.173648, 0, 0.173648, 0.984808, 0, 0, 0)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="CameraController/Yaw/Pitch"]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 0, 0, 0)
+shape = SubResource("SphereShape3D_g2els")
+spring_length = 3.0
+
+[node name="Camera3D" type="Camera3D" parent="CameraController/Yaw/Pitch/SpringArm3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.5)
+
+[node name="MovementController" type="Node" parent="." node_paths=PackedStringArray("player", "mesh_root")]
+script = ExtResource("7_jej6c")
+player = NodePath("..")
+mesh_root = NodePath("../MeshRoot")
+
+[node name="AnimationController" type="Node" parent="." node_paths=PackedStringArray("animation_tree", "player")]
+script = ExtResource("8_ur7pv")
+animation_tree = NodePath("../MeshRoot/AnimationTree")
+player = NodePath("..")
+
+[node name="MeshRoot" type="Node3D" parent="."]
+
+[node name="Character" parent="MeshRoot" instance=ExtResource("1_3vyb7")]
+
+[node name="Skeleton3D" parent="MeshRoot/Character/Rig" index="0"]
+bones/1/position = Vector3(0.0018466, 0.0881248, 0.868675)
+bones/1/rotation = Quaternion(0.763809, -0.0892153, -0.0741619, 0.634931)
+bones/3/rotation = Quaternion(-0.0307074, 0.000114553, 0.000125019, 0.999528)
+bones/4/rotation = Quaternion(0.139211, 0.000312738, 0.000399478, 0.990263)
+bones/5/rotation = Quaternion(0.0179486, -0.00023709, -0.000242061, 0.999839)
+bones/6/rotation = Quaternion(-0.0337433, 0.0960506, 0.000333511, 0.994804)
+bones/7/rotation = Quaternion(-0.613403, -0.363918, -0.403029, 0.573469)
+bones/8/rotation = Quaternion(-0.245034, 0.668558, -0.525692, 0.465442)
+bones/9/rotation = Quaternion(0.249672, -0.00171995, 0.00801437, 0.968296)
+bones/10/rotation = Quaternion(0.106009, 0.00637576, -0.0256743, 0.994013)
+bones/11/rotation = Quaternion(0.44519, 0.549369, -0.445194, 0.549365)
+bones/12/rotation = Quaternion(0.623342, 6.13486e-08, 2.15438e-07, 0.781949)
+bones/13/rotation = Quaternion(0.623341, -2.04856e-07, 6.31242e-08, 0.78195)
+bones/14/rotation = Quaternion(0.43209, 0.5387, -0.458046, 0.559727)
+bones/15/rotation = Quaternion(0.623341, 0.000943477, 0.00118364, 0.781949)
+bones/16/rotation = Quaternion(0.623341, -0.000704321, -0.000883352, 0.781949)
+bones/17/rotation = Quaternion(0.504057, 0.511541, -0.435152, 0.543042)
+bones/18/rotation = Quaternion(0.623163, -0.0200615, 0.0149255, 0.781692)
+bones/19/rotation = Quaternion(0.623342, 0.000379825, 0.000476617, 0.78195)
+bones/20/rotation = Quaternion(0.43534, 0.541356, -0.454904, 0.557203)
+bones/21/rotation = Quaternion(0.623342, 7.39393e-06, 9.58044e-06, 0.781949)
+bones/22/rotation = Quaternion(0.623341, -0.000665145, -0.0008345, 0.781949)
+bones/23/rotation = Quaternion(0.290838, 0.949649, 0.114583, 0.021217)
+bones/24/rotation = Quaternion(0.21939, 0.0238026, -0.00530472, 0.975332)
+bones/25/rotation = Quaternion(0.687388, -0.000309068, -0.000444658, 0.72629)
+bones/26/rotation = Quaternion(-0.649729, 0.302882, 0.336597, 0.610588)
+bones/27/rotation = Quaternion(-0.283963, -0.6748, 0.493001, 0.470064)
+bones/28/rotation = Quaternion(0.368437, -0.135103, 0.0542126, 0.918184)
+bones/29/rotation = Quaternion(0.116709, 0.00291669, 0.0447786, 0.992152)
+bones/30/rotation = Quaternion(0.445191, -0.549369, 0.445194, 0.549365)
+bones/31/rotation = Quaternion(0.623341, 2.17518e-07, 6.33371e-08, 0.78195)
+bones/32/rotation = Quaternion(0.623342, 1.52451e-07, -2.12003e-07, 0.78195)
+bones/33/rotation = Quaternion(0.43209, -0.5387, 0.458047, 0.559727)
+bones/34/rotation = Quaternion(0.623341, -0.00094351, -0.0011834, 0.781949)
+bones/35/rotation = Quaternion(0.623341, 0.000704174, 0.000883148, 0.781949)
+bones/36/rotation = Quaternion(0.504057, -0.511541, 0.435152, 0.543042)
+bones/37/rotation = Quaternion(0.623163, 0.0200611, -0.0149253, 0.781692)
+bones/38/rotation = Quaternion(0.623342, -0.000380153, -0.000476532, 0.781949)
+bones/39/rotation = Quaternion(0.43534, -0.541356, 0.454904, 0.557203)
+bones/40/rotation = Quaternion(0.623341, -7.55302e-06, -9.27693e-06, 0.78195)
+bones/41/rotation = Quaternion(0.623342, 0.000664924, 0.000834326, 0.781949)
+bones/42/rotation = Quaternion(-0.290838, 0.949649, 0.114584, -0.021217)
+bones/43/rotation = Quaternion(0.21939, -0.0238026, 0.00530485, 0.975332)
+bones/44/rotation = Quaternion(0.687388, 0.000309234, 0.000444539, 0.72629)
+bones/45/rotation = Quaternion(0.952947, 0.11888, -0.0146576, 0.27847)
+bones/46/rotation = Quaternion(0.233321, -0.108754, 0.0262591, 0.965942)
+bones/47/rotation = Quaternion(-0.513837, 0.022338, 0.0942769, 0.852399)
+bones/48/rotation = Quaternion(-0.000137176, 0.964307, -0.264787, -0.000499421)
+bones/49/rotation = Quaternion(0.988824, -0.138871, 0.0171224, 0.0514698)
+bones/50/rotation = Quaternion(0.183773, 0.349234, -0.0700629, 0.916163)
+bones/51/rotation = Quaternion(-0.607399, -0.0548856, -0.16129, 0.775912)
+bones/52/rotation = Quaternion(-0.000137047, 0.964307, -0.264787, -0.000499421)
+
+[node name="Mannequin" parent="MeshRoot/Character/Rig/Skeleton3D" index="0"]
+surface_material_override/0 = SubResource("StandardMaterial3D_smehm")
+surface_material_override/1 = SubResource("StandardMaterial3D_ur7pv")
+
+[node name="AnimationTree" type="AnimationTree" parent="MeshRoot"]
+root_node = NodePath("../Character")
+tree_root = SubResource("AnimationNodeBlendTree_fulsm")
+anim_player = NodePath("../Character/AnimationPlayer")
+parameters/movement_anim_speed/scale = 1.0
+parameters/movement_blend/blend_position = -0.0914634
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_3vyb7")
+
+[connection signal="set_movement_direction" from="." to="MovementController" method="_on_set_movement_direction"]
+[connection signal="set_movement_state" from="." to="MovementController" method="_on_set_movement_state"]
+[connection signal="set_movement_state" from="." to="AnimationController" method="_on_set_movement_state"]
+
+[editable path="MeshRoot/Character"]
