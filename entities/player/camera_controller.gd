@@ -2,10 +2,10 @@ extends Node
 
 @export var player: CharacterBody3D
 
-@onready var yaw_node = $Yaw
-@onready var pitch_node = $Yaw/Pitch
-@onready var spring_arm = $Yaw/Pitch/SpringArm3D
-@onready var camera = $Yaw/Pitch/SpringArm3D/Camera3D
+@onready var yaw_node := $Yaw
+@onready var pitch_node := $Yaw/Pitch
+@onready var spring_arm := $Yaw/Pitch/SpringArm3D
+@onready var camera := $Yaw/Pitch/SpringArm3D/Camera3D
 
 var yaw: float = 0
 var pitch: float = 0

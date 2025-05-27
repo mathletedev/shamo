@@ -5,7 +5,8 @@
 [resource]
 script = ExtResource("1_jvdgp")
 id = 2
-speed = 12.0
-acceleration = 5.0
-camera_fov = 90.0
+speed = 8.0
+acceleration = 4.0
+camera_fov = 75.0
+animation_speed = 1.0
 metadata/_custom_type_script = "uid://b8ga2l2m0po2v"

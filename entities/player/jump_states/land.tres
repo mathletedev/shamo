@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="JumpState" load_steps=2 format=3 uid="uid://c7jaoryfkw175"]
+
+[ext_resource type="Script" uid="uid://dcx4h1j6dddwc" path="res://entities/player/jump_state.gd" id="1_sq4to"]
+
+[resource]
+script = ExtResource("1_sq4to")
+animation_name = "land"
+jump_height = 0.0
+apex_duration = 1.0
+metadata/_custom_type_script = "uid://dcx4h1j6dddwc"

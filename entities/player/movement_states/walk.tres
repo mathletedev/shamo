@@ -7,6 +7,6 @@ script = ExtResource("1_uc8gp")
 id = 1
 speed = 3.0
 acceleration = 7.0
-camera_fov = 72.5
+camera_fov = 80.0
 animation_speed = 1.75
 metadata/_custom_type_script = "uid://b8ga2l2m0po2v"
