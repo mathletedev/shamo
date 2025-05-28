@@ -6,5 +6,5 @@
 script = ExtResource("1_1kuex")
 animation_name = "air_jump"
 jump_height = 3.0
-apex_duration = 0.5
+apex_duration = 0.7
 metadata/_custom_type_script = "uid://dcx4h1j6dddwc"
