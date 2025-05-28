@@ -6,6 +6,9 @@ env:
     EXPORT_NAME: shamo
     PROJECT_PATH: .
 
+permissions:
+    contents: write
+
 jobs:
     export-web:
         name: Web Export
