@@ -1,5 +1,10 @@
 name: Deploy to GitHub Pages
 
+env:
+    GODOT_VERSION: 4.4
+    EXPORT_NAME: shamo
+    PROJECT_PATH: .
+
 on:
     push:
         branches: [main]
