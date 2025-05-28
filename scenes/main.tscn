@@ -1,7 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://cmer4d6sqw3tl"]
+[gd_scene load_steps=8 format=3 uid="uid://cmer4d6sqw3tl"]
 
-[ext_resource type="PackedScene" uid="uid://gbybg78jk1ob" path="res://scenes/player.tscn" id="1_o5qli"]
+[ext_resource type="PackedScene" uid="uid://gbybg78jk1ob" path="res://entities/player/player.tscn" id="1_o5qli"]
 [ext_resource type="Texture2D" uid="uid://cwga8t8gg4gxc" path="res://textures/grid.png" id="2_0wfyh"]
+[ext_resource type="Script" uid="uid://decv7hlbor200" path="res://entities/chunks/chunk_loader.gd" id="2_jyhfs"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_o5qli"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -32,12 +33,10 @@ shadow_enabled = true
 
 [node name="Player" parent="." instance=ExtResource("1_o5qli")]
 
-[node name="CSGBox3D" type="CSGBox3D" parent="."]
-transform = Transform3D(100, 0, 0, 0, 10, 0, 0, 0, 100, 0, -5, 0)
-use_collision = true
-material = SubResource("StandardMaterial3D_0wfyh")
+[node name="ChunkLoader" type="Node" parent="."]
+script = ExtResource("2_jyhfs")
 
-[node name="CSGBox3D2" type="CSGBox3D" parent="."]
-transform = Transform3D(10, 0, 0, 0, 4, 0, 0, 0, 1, 10, 2, 0)
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(100, 0, 0, 0, 10, 0, 0, 0, 100, 0, -10, 0)
 use_collision = true
 material = SubResource("StandardMaterial3D_0wfyh")
