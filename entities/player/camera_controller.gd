@@ -27,6 +27,10 @@ func _ready():
 
 
 func _input(event):
+	# https://www.reddit.com/r/godot/comments/1ead8h4/how_to_capture_mouse_properly_in_web_exports/
+	if (Input.mouse_mode != Input.MOUSE_MODE_CAPTURED) and event is InputEventMouseButton:
+		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
 	if event is InputEventMouseMotion:
 		yaw += -event.relative.x * yaw_sensitivity
 		pitch += event.relative.y * pitch_sensitivity
