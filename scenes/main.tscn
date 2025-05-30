@@ -80,7 +80,7 @@ mesh = SubResource("PlaneMesh_tbgi4")
 skeleton = NodePath("../..")
 
 [node name="Floor" type="StaticBody3D" parent="Ocean"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, 0)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Ocean/Floor"]
 transform = Transform3D(400, 0, 0, 0, 1, 0, 0, 0, 400, 0, 0, 0)

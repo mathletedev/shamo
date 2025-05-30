@@ -32,7 +32,7 @@ func _physics_process(_delta):
 		pass
 	elif chunk.x > max_x:
 		var next_address := decode(encode(last_address) * CHARSET.length() + 1)
-		async_load_street(Vector2(last_chunk.x + 1, 0), next_address, 0.5)
+		async_load_street(Vector2(last_chunk.x + 1, chunk.y), next_address, 1)
 		last_address = next_address
 
 	last_chunk = chunk

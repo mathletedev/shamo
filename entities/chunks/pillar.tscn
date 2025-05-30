@@ -4,19 +4,19 @@
 [ext_resource type="Material" uid="uid://c2a5fonntckg0" path="res://entities/chunks/pillar.tres" id="2_35pt7"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_0wfyh"]
-size = Vector3(4, 1, 4)
+size = Vector3(4, 20, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ejgek"]
-size = Vector3(4, 0, 4)
+size = Vector3(4, 20, 4)
 
 [node name="Pillar" type="StaticBody3D"]
 script = ExtResource("1_dktof")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -10, 2)
 mesh = SubResource("BoxMesh_0wfyh")
 surface_material_override/0 = ExtResource("2_35pt7")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -10, 2)
 shape = SubResource("BoxShape3D_ejgek")

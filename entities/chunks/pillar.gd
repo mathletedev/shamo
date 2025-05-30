@@ -13,7 +13,6 @@ var pillar_mat := preload("res://entities/chunks/pillar.tres")
 var datum: int
 var delay: int
 
-var y: float = 0
 var target_y: float
 var init_time: int
 
@@ -25,14 +24,17 @@ func _ready():
 	# map [0..15] to [MAX_HEIGHT/16..MAX_HEIGHT]
 	var height := (datum + 1) * (MAX_HEIGHT / 16)
 
-	mesh.scale.y = height
+	# simplify: just make height default to 20
+	# mesh.scale.y = height
 
-	var shape := BoxShape3D.new()
-	shape.extents = Vector3(PILLAR_WIDTH / 2, height / 2, PILLAR_DEPTH / 2)
-	collision_shape.shape = shape
+	# var shape := BoxShape3D.new()
+	# shape.extents = Vector3(PILLAR_WIDTH / 2, height / 2, PILLAR_DEPTH / 2)
+	# collision_shape.shape = shape
 
-	y = -height / 2
-	target_y = -y
+	# y = -height / 2
+	# target_y = -y
+
+	target_y = height
 
 	var new_mat: StandardMaterial3D = pillar_mat.duplicate()
 	var l := datum / 15.0
@@ -43,5 +45,4 @@ func _ready():
 func _process(delta):
 	if Time.get_ticks_msec() >= init_time + delay:
 		visible = true
-		y = lerp(y, target_y, delta * 4)
-		position.y = y
+		position.y = lerp(position.y, target_y, delta * 4)
