@@ -197,7 +197,7 @@ void fragment() {
 
 }
 "
-graph_offset = Vector2(1357.11, 28.4051)
+graph_offset = Vector2(345.562, -104.248)
 modes/blend = 1
 nodes/fragment/0/position = Vector2(1760, 220)
 nodes/fragment/2/node = SubResource("VisualShaderNodeTexture_aegcx")

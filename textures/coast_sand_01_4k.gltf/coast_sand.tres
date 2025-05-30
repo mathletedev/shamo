@@ -1,68 +1,10 @@
-[gd_resource type="StandardMaterial3D" load_steps=11 format=3 uid="uid://m0e53km677hd"]
+[gd_resource type="StandardMaterial3D" load_steps=4 format=3 uid="uid://m0e53km677hd"]
 
 [ext_resource type="Texture2D" uid="uid://dkylpchcyax1a" path="res://textures/coast_sand_01_4k.gltf/textures/coast_sand_01_diff_4k.jpg" id="1_b3e2i"]
 [ext_resource type="Texture2D" uid="uid://dl7fqoa62814h" path="res://textures/coast_sand_01_4k.gltf/textures/coast_sand_01_nor_gl_4k.jpg" id="2_msfmn"]
 [ext_resource type="Texture2D" uid="uid://dhwub02g82301" path="res://textures/coast_sand_01_4k.gltf/textures/coast_sand_01_rough_4k.jpg" id="3_3rw6l"]
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_pldmd"]
-noise_type = 0
-frequency = 0.05
-cellular_distance_function = 1
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_pdy4l"]
-width = 256
-height = 128
-seamless = true
-seamless_blend_skirt = 1.0
-noise = SubResource("FastNoiseLite_pldmd")
-
-[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_5jpgm"]
-output_port_for_preview = 0
-texture = SubResource("NoiseTexture2D_pdy4l")
-
-[sub_resource type="VisualShaderNodeCompare" id="VisualShaderNodeCompare_pldmd"]
-default_input_values = [0, 0.0, 1, 0.2, 2, 1e-05]
-function = 3
-
-[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_pdy4l"]
-output_port_for_preview = 0
-operator = 2
-
-[sub_resource type="VisualShader" id="VisualShader_b3e2i"]
-code = "shader_type spatial;
-render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx;
-
-uniform sampler2D tex_frg_2;
-
-
-
-void fragment() {
-// Texture2D:2
-	vec4 n_out2p0 = texture(tex_frg_2, UV);
-
-
-// Output:0
-	ALBEDO = vec3(n_out2p0.xyz);
-
-
-}
-"
-graph_offset = Vector2(413.633, 327.042)
-nodes/fragment/0/position = Vector2(1520, 720)
-nodes/fragment/2/node = SubResource("VisualShaderNodeTexture_5jpgm")
-nodes/fragment/2/position = Vector2(640, 700)
-nodes/fragment/3/node = SubResource("VisualShaderNodeCompare_pldmd")
-nodes/fragment/3/position = Vector2(940, 980)
-nodes/fragment/4/node = SubResource("VisualShaderNodeVectorOp_pdy4l")
-nodes/fragment/4/position = Vector2(1180, 800)
-nodes/fragment/connections = PackedInt32Array(2, 0, 3, 0, 3, 0, 4, 1, 2, 0, 4, 0, 2, 0, 0, 0)
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_fjb5j"]
-render_priority = 0
-shader = SubResource("VisualShader_b3e2i")
-
 [resource]
-next_pass = SubResource("ShaderMaterial_fjb5j")
 albedo_texture = ExtResource("1_b3e2i")
 roughness_texture = ExtResource("3_3rw6l")
 normal_enabled = true

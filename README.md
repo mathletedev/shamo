@@ -6,3 +6,4 @@
 
 - Third Person Controller: https://youtu.be/C-1AerTEjFU?si=5_kOrdYYsfkj8BPi
 - Robot Model: https://quaternius.com/packs/universalanimationlibrary.html
+- Water Shader: https://www.youtube.com/watch?v=U20foZ_axG4

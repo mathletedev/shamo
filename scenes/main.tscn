@@ -1,9 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://cmer4d6sqw3tl"]
+[gd_scene load_steps=14 format=3 uid="uid://cmer4d6sqw3tl"]
 
 [ext_resource type="PackedScene" uid="uid://gbybg78jk1ob" path="res://entities/player/player.tscn" id="1_o5qli"]
+[ext_resource type="CompressedTexture3D" uid="uid://c8wwwal5iuy3d" path="res://etc/inception_lut.png" id="1_tbgi4"]
 [ext_resource type="Script" uid="uid://decv7hlbor200" path="res://entities/chunks/chunk_loader.gd" id="2_jyhfs"]
 [ext_resource type="Shader" uid="uid://dm07b6gx2l2yo" path="res://entities/water/water_shader.tres" id="3_jyhfs"]
-[ext_resource type="Material" uid="uid://m0e53km677hd" path="res://textures/coast_sand_01_4k.gltf/coast_sand.tres" id="4_jyhfs"]
+[ext_resource type="Material" uid="uid://oy8ibawdu7r" path="res://textures/coast_sand_01_4k.gltf/coast_sand_caustics.tres" id="4_jyhfs"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_o5qli"]
 sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
@@ -16,16 +17,29 @@ sky_material = SubResource("ProceduralSkyMaterial_o5qli")
 background_mode = 2
 sky = SubResource("Sky_0wfyh")
 tonemap_mode = 2
+fog_enabled = true
+fog_mode = 1
+fog_light_color = Color(0.436113, 0.510324, 0.518836, 1)
+fog_light_energy = 0.2
+fog_sun_scatter = 0.4
+fog_density = 1.0
+fog_sky_affect = 0.5
+fog_height = 1.0
+fog_height_density = -0.01
+fog_depth_end = 50.0
+volumetric_fog_enabled = true
+adjustment_enabled = true
+adjustment_color_correction = ExtResource("1_tbgi4")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jyhfs"]
 transparency = 1
-albedo_color = Color(0.312357, 0.644623, 0.775114, 0.227451)
+albedo_color = Color(0.334721, 0.44869, 0.464202, 0.458824)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_tbgi4"]
 render_priority = 0
 next_pass = SubResource("StandardMaterial3D_jyhfs")
 shader = ExtResource("3_jyhfs")
-shader_parameter/uv_scale = 4.0
+shader_parameter/uv_scale = 8.0
 shader_parameter/direction_1 = Vector2(-0.01, 0.01)
 shader_parameter/direction_2 = Vector2(-0.05, 0.01)
 shader_parameter/highlight_threshold = 0.5
@@ -47,8 +61,9 @@ size = Vector3(400, 1, 400)
 environment = SubResource("Environment_sugp2")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.997684, -0.0146053, 0.0664288, 0, 0.976672, 0.214735, -0.0680154, 0.214238, -0.974411, 0, 0, 0)
-visible = false
+transform = Transform3D(-4.37113e-08, 0.214735, -0.976673, 0, 0.976672, 0.214735, 0.999999, 9.38638e-09, -4.26917e-08, 0, 0, 0)
+light_color = Color(0.687694, 0.814377, 0.803779, 1)
+light_energy = 0.5
 shadow_enabled = true
 
 [node name="Player" parent="." instance=ExtResource("1_o5qli")]
@@ -56,18 +71,21 @@ shadow_enabled = true
 [node name="ChunkLoader" type="Node" parent="."]
 script = ExtResource("2_jyhfs")
 
-[node name="Water" type="MeshInstance3D" parent="."]
+[node name="Ocean" type="Node3D" parent="."]
+
+[node name="Water" type="MeshInstance3D" parent="Ocean"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 mesh = SubResource("PlaneMesh_tbgi4")
+skeleton = NodePath("../..")
 
-[node name="Floor" type="StaticBody3D" parent="."]
+[node name="Floor" type="StaticBody3D" parent="Ocean"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2, 0)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ocean/Floor"]
 transform = Transform3D(400, 0, 0, 0, 1, 0, 0, 0, 400, 0, 0, 0)
 mesh = SubResource("PlaneMesh_sugp2")
 surface_material_override/0 = ExtResource("4_jyhfs")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ocean/Floor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("BoxShape3D_jyhfs")

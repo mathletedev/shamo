@@ -1,0 +1,23 @@
+[gd_resource type="StandardMaterial3D" load_steps=6 format=3 uid="uid://oy8ibawdu7r"]
+
+[ext_resource type="Texture2D" uid="uid://dkylpchcyax1a" path="res://textures/coast_sand_01_4k.gltf/textures/coast_sand_01_diff_4k.jpg" id="1_rqxlr"]
+[ext_resource type="Shader" uid="uid://dqkjmlhhumhgf" path="res://entities/water/caustics.tres" id="2_ilrjl"]
+[ext_resource type="Texture2D" uid="uid://dl7fqoa62814h" path="res://textures/coast_sand_01_4k.gltf/textures/coast_sand_01_nor_gl_4k.jpg" id="3_uvwx7"]
+[ext_resource type="Texture2D" uid="uid://dhwub02g82301" path="res://textures/coast_sand_01_4k.gltf/textures/coast_sand_01_rough_4k.jpg" id="4_074mw"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fjb5j"]
+render_priority = 0
+shader = ExtResource("2_ilrjl")
+shader_parameter/uv_scale = 32.0
+shader_parameter/direction_2 = Vector2(-0.01, 0.01)
+shader_parameter/direction_1 = Vector2(-0.05, 0.01)
+
+[resource]
+next_pass = SubResource("ShaderMaterial_fjb5j")
+albedo_texture = ExtResource("1_rqxlr")
+roughness_texture = ExtResource("4_074mw")
+normal_enabled = true
+normal_texture = ExtResource("3_uvwx7")
+uv1_scale = Vector3(0.1, 0.1, 0.1)
+uv1_triplanar = true
+uv1_world_triplanar = true
