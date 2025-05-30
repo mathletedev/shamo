@@ -68,8 +68,9 @@ shadow_enabled = true
 
 [node name="Player" parent="." instance=ExtResource("1_o5qli")]
 
-[node name="ChunkLoader" type="Node" parent="."]
+[node name="ChunkLoader" type="Node" parent="." node_paths=PackedStringArray("player")]
 script = ExtResource("2_jyhfs")
+player = NodePath("../Player")
 
 [node name="Ocean" type="Node3D" parent="."]
 
