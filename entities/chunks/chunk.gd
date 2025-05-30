@@ -11,9 +11,16 @@ const MARGIN_Y: float = (CHUNK_DEPTH - Pillar.PILLAR_DEPTH * CHUNK_ROWS) / 2.0
 var pillar_scene := preload("res://entities/chunks/pillar.tscn")
 
 var address: String
+var delay: int
+
+var y: float = -4
+var init_time: int
 
 
 func _ready():
+	position.y = y
+	init_time = Time.get_ticks_msec()
+
 	var ctx := HashingContext.new()
 	ctx.start(HashingContext.HASH_SHA256)
 	ctx.update(address.to_utf8_buffer())
@@ -39,3 +46,10 @@ func _ready():
 			pillar.datum = nibble
 			pillar.delay = (abs(CHUNK_ROWS / 2.0 - i) + abs(CHUNK_COLS / 2.0 - j)) * 200
 			add_child(pillar)
+
+
+func _process(delta):
+	if Time.get_ticks_msec() >= init_time + delay:
+		visible = true
+		y = lerp(y, 0.0, delta * 4)
+		position.y = y

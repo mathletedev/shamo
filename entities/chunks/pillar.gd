@@ -19,6 +19,9 @@ var init_time: int
 
 
 func _ready():
+	visible = false
+	init_time = Time.get_ticks_msec()
+
 	# map [0..15] to [MAX_HEIGHT/16..MAX_HEIGHT]
 	var height := (datum + 1) * (MAX_HEIGHT / 16)
 
@@ -36,13 +39,9 @@ func _ready():
 	new_mat.albedo_color = Color(l, l, l)
 	mesh.material_override = new_mat
 
-	init_time = Time.get_ticks_msec()
-
 
 func _process(delta):
 	if Time.get_ticks_msec() >= init_time + delay:
 		visible = true
 		y = lerp(y, target_y, delta * 4)
 		position.y = y
-	else:
-		visible = false
