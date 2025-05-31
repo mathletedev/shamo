@@ -35,6 +35,28 @@ func _physics_process(_delta):
 	elif chunk.x < last_chunk.x:
 		unload_street(Vector2(last_chunk.x, chunk.y))
 
+	if chunk.y != last_chunk.y:
+		var dir := 1 if chunk.y > last_chunk.y else -1
+
+		# next chunk
+		var entering_view := chunk.y + render_distance * dir
+		if chunks.has(Vector2(chunk.x, entering_view)):
+			chunks[Vector2(chunk.x, entering_view)].undescend()
+		elif (
+			not chunks.has(Vector2(chunk.x, entering_view))
+			and chunks.has(Vector2(chunk.x, entering_view - dir))
+		):
+			var furthest_chunk: Chunk = chunks[Vector2(chunk.x, entering_view - dir)]
+			var next_address := decode(encode(furthest_chunk.address) + dir)
+			# check for underflow or overflow
+			if next_address.length() == chunks[chunk].address.length():
+				spawn_chunk(Vector2(chunk.x, entering_view), next_address)
+
+		# chunk is too far back
+		var exiting_view := chunk.y - (render_distance + 1) * dir
+		if chunks.has(Vector2(chunk.x, exiting_view)):
+			destroy_chunk(Vector2(chunk.x, exiting_view))
+
 	last_chunk = chunk
 
 

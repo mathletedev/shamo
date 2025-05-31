@@ -75,3 +75,10 @@ func descend(new_delay: int = 0):
 	for i in range(0, ROWS):
 		for j in range(0, COLS):
 			pillars[i][j].descending = true
+
+
+func undescend():
+	descending = false
+	for i in range(0, ROWS):
+		for j in range(0, COLS):
+			pillars[i][j].descending = false
