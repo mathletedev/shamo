@@ -1,8 +1,8 @@
 extends Node3D
 class_name Pillar
 
-const PILLAR_WIDTH: float = 4
-const PILLAR_DEPTH: float = 4
+const WIDTH: float = 4
+const DEPTH: float = 4
 const MAX_HEIGHT: float = 20
 
 @onready var mesh: MeshInstance3D = $MeshInstance3D
@@ -12,6 +12,7 @@ var pillar_mat := preload("res://entities/chunks/pillar.tres")
 
 var datum: int
 var delay: int
+var descending := false
 
 var target_y: float
 var init_time: int
@@ -28,7 +29,7 @@ func _ready():
 	# mesh.scale.y = height
 
 	# var shape := BoxShape3D.new()
-	# shape.extents = Vector3(PILLAR_WIDTH / 2, height / 2, PILLAR_DEPTH / 2)
+	# shape.extents = Vector3(WIDTH / 2, height / 2, DEPTH / 2)
 	# collision_shape.shape = shape
 
 	# y = -height / 2
@@ -45,4 +46,4 @@ func _ready():
 func _process(delta):
 	if Time.get_ticks_msec() >= init_time + delay:
 		visible = true
-		position.y = lerp(position.y, target_y, delta * 4)
+		position.y = lerp(position.y, -0.5 if descending else target_y, delta * 4)

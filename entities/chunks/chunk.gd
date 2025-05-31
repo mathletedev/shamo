@@ -1,24 +1,34 @@
 extends Node3D
 class_name Chunk
 
-const CHUNK_WIDTH: int = 40
-const CHUNK_DEPTH: int = 40
-const CHUNK_ROWS: int = 8
-const CHUNK_COLS: int = 8
-const MARGIN_X: float = (CHUNK_WIDTH - Pillar.PILLAR_WIDTH * CHUNK_COLS) / 2.0
-const MARGIN_Y: float = (CHUNK_DEPTH - Pillar.PILLAR_DEPTH * CHUNK_ROWS) / 2.0
-const INITIAL_DELAY: int = 1000
+const WIDTH: int = 40
+const DEPTH: int = 40
+const ROWS: int = 8
+const COLS: int = 8
+const MARGIN_X: float = (WIDTH - Pillar.WIDTH * COLS) / 2.0
+const MARGIN_Y: float = (DEPTH - Pillar.DEPTH * ROWS) / 2.0
+const INIT_DELAY: int = 1000
+const INIT_HEIGHT: float = -8
+const KEEP_ALIVE_TIME: int = 3
 
 var pillar_scene := preload("res://entities/chunks/pillar.tscn")
 
 var address: String
 var delay: int
+var descending := false
 
+var pillars := Array()
 var init_time: int
 
 
 func _ready():
-	position.y = -6
+	# malloc pillars
+	pillars.resize(ROWS)
+	for i in range(0, ROWS):
+		pillars[i] = Array()
+		pillars[i].resize(COLS)
+
+	position.y = INIT_HEIGHT
 	init_time = Time.get_ticks_msec()
 
 	var ctx := HashingContext.new()
@@ -26,11 +36,11 @@ func _ready():
 	ctx.update(address.to_utf8_buffer())
 	var digest := ctx.finish()
 
-	for i in range(0, CHUNK_ROWS):
-		for j in range(0, CHUNK_COLS):
+	for i in range(0, ROWS):
+		for j in range(0, COLS):
 			# index into the hash by doubles
 			@warning_ignore("integer_division")
-			var nibble := digest[(i * CHUNK_COLS + j) / 2]
+			var nibble := digest[(i * COLS + j) / 2]
 			if j % 2 == 0:
 				# take first half of the byte
 				nibble = nibble >> 4
@@ -41,18 +51,27 @@ func _ready():
 			var pillar: Pillar = pillar_scene.instantiate()
 			pillar.name = str(i) + "_" + str(j)
 			# INFO: chunk is rotated 90 degrees
-			pillar.position.z = MARGIN_X + j * Pillar.PILLAR_WIDTH
-			pillar.position.x = MARGIN_Y + i * Pillar.PILLAR_DEPTH
+			pillar.position.z = MARGIN_X + j * Pillar.WIDTH
+			pillar.position.x = MARGIN_Y + i * Pillar.DEPTH
 			pillar.datum = nibble
-			pillar.delay = (
-				delay
-				+ INITIAL_DELAY
-				+ (abs(CHUNK_ROWS / 2.0 - i) + abs(CHUNK_COLS / 2.0 - j)) * 200
-			)
+			pillar.delay = (delay + INIT_DELAY + (abs(ROWS / 2.0 - i) + abs(COLS / 2.0 - j)) * 200)
+			pillars[i][j] = pillar
 			add_child(pillar)
 
 
 func _process(delta):
 	if Time.get_ticks_msec() >= init_time + delay:
 		visible = true
-		position.y = lerp(position.y, 0.0, delta * 2)
+		position.y = lerp(position.y, INIT_HEIGHT if descending else 0.0, delta * 2)
+
+
+func descend(new_delay: int = 0):
+	# start descending back into ground
+	descending = true
+	init_time = Time.get_ticks_msec()
+	delay = new_delay
+
+	await get_tree().create_timer(delay / 1000.0).timeout
+	for i in range(0, ROWS):
+		for j in range(0, COLS):
+			pillars[i][j].descending = true
