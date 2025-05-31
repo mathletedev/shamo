@@ -13,6 +13,7 @@ const KEEP_ALIVE_TIME: int = 3
 
 var pillar_scene := preload("res://entities/chunks/pillar.tscn")
 
+var coords: Vector2
 var address: String
 var delay: int
 var descending := false
