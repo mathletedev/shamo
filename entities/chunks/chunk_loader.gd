@@ -127,7 +127,7 @@ func destroy_chunk(coords: Vector2i, delay: int = 0):
 	chunks[coords].descend(delay)
 
 	await get_tree().create_timer(delay / 1000.0 + Chunk.KEEP_ALIVE_TIME).timeout
-	if chunks[coords].descending:
+	if chunks.has(coords) and chunks[coords].descending:
 		# destroy if hasn't undestroyed yet
 		chunks[coords].queue_free()
 		chunks.erase(coords)
