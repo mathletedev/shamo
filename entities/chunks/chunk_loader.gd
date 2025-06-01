@@ -34,33 +34,37 @@ func _physics_process(_delta):
 	if coords == chunk.coords:
 		return
 
-	if coords.x > chunk.coords.x:
+	# prevent "U" formation
+	if coords.x > chunk.coords.x && chunks.has(chunk.coords):
 		var next_address := decode(encode(chunk.address) * CHARSET.length() + 1)
 		async_load_street(Vector2(chunk.coords.x + 1, coords.y), next_address, 1)
-	elif coords.x < chunk.coords.x && coords.x > 0:
+	elif coords.x < chunk.coords.x && coords.x >= 0:
+		print("unloading street")
 		unload_street(Vector2(chunk.coords.x, coords.y))
 
 	if coords.y != chunk.coords.y:
-		var dir := 1 if coords.y > chunk.coords.y else -1
+		for i in range(-render_distance, 1):
+			var dir := 1 if coords.y > chunk.coords.y else -1
 
-		# next chunk
-		var entering_view := coords.y + render_distance * dir
-		if chunks.has(Vector2(coords.x, entering_view)):
-			chunks[Vector2(coords.x, entering_view)].undescend()
-		elif (
-			not chunks.has(Vector2(coords.x, entering_view))
-			and chunks.has(Vector2(coords.x, entering_view - dir))
-		):
-			var furthest_chunk: Chunk = chunks[Vector2(coords.x, entering_view - dir)]
-			var next_address := decode(encode(furthest_chunk.address) + dir)
-			# check for underflow or overflow
-			if next_address.length() == chunks[coords].address.length():
-				spawn_chunk(Vector2(coords.x, entering_view), next_address)
+			# next chunk
+			var entering_view := coords.y + render_distance * dir
+			var x := coords.x + i
+			if chunks.has(Vector2(x, entering_view)):
+				chunks[Vector2(x, entering_view)].undescend()
+			elif (
+				not chunks.has(Vector2(x, entering_view))
+				and chunks.has(Vector2(x, entering_view - dir))
+			):
+				var furthest_chunk: Chunk = chunks[Vector2(x, entering_view - dir)]
+				var next_address := decode(encode(furthest_chunk.address) + dir)
+				# check for underflow or overflow
+				if next_address.length() == chunks[furthest_chunk.coords].address.length():
+					spawn_chunk(Vector2(x, entering_view), next_address)
 
-		# chunk is too far back
-		var exiting_view := coords.y - (render_distance + 1) * dir
-		if chunks.has(Vector2(coords.x, exiting_view)):
-			destroy_chunk(Vector2(coords.x, exiting_view))
+			# chunk is too far back
+			var exiting_view := coords.y - (render_distance + 1) * dir
+			if chunks.has(Vector2(x, exiting_view)):
+				destroy_chunk(Vector2(x, exiting_view))
 
 	chunk.coords = coords
 	chunk.address = "?" if not chunks.has(coords) else chunks[coords].address
