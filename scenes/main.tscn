@@ -1,14 +1,17 @@
-[gd_scene load_steps=14 format=3 uid="uid://cmer4d6sqw3tl"]
+[gd_scene load_steps=15 format=3 uid="uid://cmer4d6sqw3tl"]
 
 [ext_resource type="PackedScene" uid="uid://gbybg78jk1ob" path="res://entities/player/player.tscn" id="1_o5qli"]
 [ext_resource type="CompressedTexture3D" uid="uid://c8wwwal5iuy3d" path="res://etc/inception_lut.png" id="1_tbgi4"]
+[ext_resource type="Script" uid="uid://dhbglvgtjm2lj" path="res://ui/data_hud.gd" id="1_tefeu"]
 [ext_resource type="Script" uid="uid://decv7hlbor200" path="res://entities/chunks/chunk_loader.gd" id="2_jyhfs"]
 [ext_resource type="Shader" uid="uid://dm07b6gx2l2yo" path="res://entities/water/water_shader.tres" id="3_jyhfs"]
 [ext_resource type="Material" uid="uid://oy8ibawdu7r" path="res://textures/coast_sand_01_4k.gltf/coast_sand_caustics.tres" id="4_jyhfs"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_o5qli"]
-sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
-ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+sky_top_color = Color(0.447311, 0.629885, 0.660676, 1)
+sky_horizon_color = Color(0.494118, 0.643137, 0.647059, 1)
+ground_bottom_color = Color(0.139142, 0.190123, 0.144511, 1)
+ground_horizon_color = Color(0.493434, 0.642778, 0.645992, 1)
 
 [sub_resource type="Sky" id="Sky_0wfyh"]
 sky_material = SubResource("ProceduralSkyMaterial_o5qli")
@@ -57,6 +60,39 @@ size = Vector3(400, 1, 400)
 
 [node name="Main" type="Node3D"]
 
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="DataHUD" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_tefeu")
+
+[node name="Address" type="RichTextLabel" parent="CanvasLayer/DataHUD"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = 16.0
+offset_bottom = 40.0
+grow_horizontal = 2
+text = "Address:"
+
+[node name="Hash" type="RichTextLabel" parent="CanvasLayer/DataHUD"]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 16.0
+offset_top = 48.0
+offset_right = 16.0
+offset_bottom = 72.0
+grow_horizontal = 2
+text = "Hash:"
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_sugp2")
 
@@ -64,6 +100,7 @@ environment = SubResource("Environment_sugp2")
 transform = Transform3D(-4.37113e-08, 0.214735, -0.976673, 0, 0.976672, 0.214735, 0.999999, 9.38638e-09, -4.26917e-08, 0, 0, 0)
 light_color = Color(0.687694, 0.814377, 0.803779, 1)
 light_energy = 0.5
+light_bake_mode = 1
 shadow_enabled = true
 
 [node name="Player" parent="." instance=ExtResource("1_o5qli")]
@@ -90,3 +127,5 @@ surface_material_override/0 = ExtResource("4_jyhfs")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ocean/Floor"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("BoxShape3D_jyhfs")
+
+[connection signal="chunk_changed" from="ChunkLoader" to="CanvasLayer/DataHUD" method="_on_chunk_changed"]

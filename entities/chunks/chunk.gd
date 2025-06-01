@@ -13,8 +13,9 @@ const KEEP_ALIVE_TIME: int = 3
 
 var pillar_scene := preload("res://entities/chunks/pillar.tscn")
 
-var coords: Vector2
+var coords: Vector2i
 var address: String
+var digest: PackedByteArray
 var delay: int
 var descending := false
 
@@ -35,7 +36,7 @@ func _ready():
 	var ctx := HashingContext.new()
 	ctx.start(HashingContext.HASH_SHA256)
 	ctx.update(address.to_utf8_buffer())
-	var digest := ctx.finish()
+	digest = ctx.finish()
 
 	for i in range(0, ROWS):
 		for j in range(0, COLS):
@@ -73,6 +74,9 @@ func descend(new_delay: int = 0):
 	delay = new_delay
 
 	await get_tree().create_timer(delay / 1000.0).timeout
+	if not descending:
+		return
+
 	for i in range(0, ROWS):
 		for j in range(0, COLS):
 			pillars[i][j].descending = true
