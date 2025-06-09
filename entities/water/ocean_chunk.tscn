@@ -1,0 +1,47 @@
+[gd_scene load_steps=8 format=3 uid="uid://ckxs3exmi5aok"]
+
+[ext_resource type="Shader" uid="uid://dm07b6gx2l2yo" path="res://entities/water/water_shader.tres" id="1_7w7gj"]
+[ext_resource type="Material" uid="uid://oy8ibawdu7r" path="res://textures/coast_sand_01_4k.gltf/coast_sand_caustics.tres" id="2_6fjmy"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2x7xe"]
+transparency = 1
+albedo_color = Color(0.333333, 0.447059, 0.462745, 0.458824)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tbgi4"]
+render_priority = 0
+next_pass = SubResource("StandardMaterial3D_2x7xe")
+shader = ExtResource("1_7w7gj")
+shader_parameter/uv_scale = 8.0
+shader_parameter/direction_1 = Vector2(-0.01, 0.01)
+shader_parameter/direction_2 = Vector2(-0.05, 0.01)
+shader_parameter/highlight_threshold = 0.5
+shader_parameter/main_threshold = 0.3
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_tbgi4"]
+material = SubResource("ShaderMaterial_tbgi4")
+size = Vector2(160, 160)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_sugp2"]
+size = Vector2(160, 160)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_jyhfs"]
+size = Vector3(160, 1, 160)
+
+[node name="OceanChunk" type="Node3D"]
+
+[node name="Water" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80, -1, -80)
+mesh = SubResource("PlaneMesh_tbgi4")
+skeleton = NodePath("../..")
+
+[node name="Floor" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80, 0, -80)
+mesh = SubResource("PlaneMesh_sugp2")
+surface_material_override/0 = ExtResource("2_6fjmy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80, -0.5, -80)
+shape = SubResource("BoxShape3D_jyhfs")

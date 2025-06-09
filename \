@@ -9,10 +9,8 @@ signal chunk_changed(chunk: Chunk)
 @export var render_distance: int = 4
 
 var chunk_scene := preload("res://entities/chunks/chunk.tscn")
-var ocean_chunk_scene := preload("res://entities/water/ocean_chunk.tscn")
 
 var chunks := {}
-var ocean_chunks := {}
 
 
 class ChunkData:
@@ -21,7 +19,6 @@ class ChunkData:
 
 
 var chunk := ChunkData.new()
-var ocean_coords: Vector2i
 
 
 func _ready():
@@ -32,12 +29,6 @@ func _ready():
 	chunk.address = "A"
 
 	load_street(Vector2(0, 0))
-
-	ocean_coords = world_to_ocean_chunk(player.global_transform.origin)
-
-	for i in range(-1, 2):
-		for j in range(-1, 2):
-			spawn_ocean_chunk(Vector2i(i, j))
 
 	emit_signal("chunk_changed", chunks[chunk.coords])
 
@@ -53,7 +44,6 @@ func _physics_process(_delta):
 	elif coords.x < chunk.coords.x && coords.x >= 0:
 		unload_street(Vector2i(chunk.coords.x, coords.y))
 
-	# handle chunks
 	if coords.y != chunk.coords.y:
 		for i in range(-render_distance, 1):
 			var x := coords.x + i
@@ -82,47 +72,23 @@ func _physics_process(_delta):
 			if chunks.has(Vector2i(x, exiting_view)):
 				destroy_chunk(Vector2i(x, exiting_view))
 
-	# broadcast signal
-	chunk.coords = coords
-	chunk.address = "?" if not chunks.has(coords) else chunks[coords].address
+	if coords != chunk.coords:
+		chunk.coords = coords
+		chunk.address = "?" if not chunks.has(coords) else chunks[coords].address
 
-	if chunks.has(coords):
-		emit_signal("chunk_changed", chunks[coords])
-	else:
+		if chunks.has(coords):
+			emit_signal("chunk_changed", chunks[coords])
+			return
+
 		var tmp := Chunk.new()
 		tmp.coords = coords
 		tmp.address = "?"
-		tmp.digest = []
-		emit_signal("chunk_changed", tmp)
-
-	# handle ocean chunks
-	var new_ocean_coords := world_to_ocean_chunk(player.global_transform.origin)
-	if new_ocean_coords == ocean_coords:
-		return
-
-	if ocean_coords.x != new_ocean_coords.x:
-		var dir := 1 if new_ocean_coords.x > ocean_coords.x else -1
-		for i in range(-1, 2):
-			spawn_ocean_chunk(Vector2i(new_ocean_coords.x + dir, new_ocean_coords.y + i))
-			destroy_ocean_chunk(Vector2i(ocean_coords.x - dir, new_ocean_coords.y + i))
-	if ocean_coords.y != new_ocean_coords.y:
-		var dir := 1 if new_ocean_coords.y > ocean_coords.y else -1
-		for i in range(-1, 2):
-			spawn_ocean_chunk(Vector2i(new_ocean_coords.x + i, new_ocean_coords.y + dir))
-			destroy_ocean_chunk(Vector2i(new_ocean_coords.x + i, ocean_coords.y - dir))
-
-	ocean_coords = new_ocean_coords
+		tmp.digest = ""
 
 
 func world_to_chunk(world_pos: Vector3) -> Vector2i:
 	return Vector2i(
 		floor(round(world_pos.x) / Chunk.WIDTH), -ceil(round(world_pos.z) / Chunk.DEPTH)
-	)
-
-
-func world_to_ocean_chunk(world_pos: Vector3) -> Vector2i:
-	return Vector2i(
-		floor(round(world_pos.x) / (4 * Chunk.WIDTH)), -ceil(round(world_pos.z) / (4 * Chunk.DEPTH))
 	)
 
 
@@ -168,22 +134,7 @@ func destroy_chunk(coords: Vector2i, delay: int = 0):
 	chunks[coords].descend(delay)
 
 	await get_tree().create_timer(delay / 1000.0 + Chunk.KEEP_ALIVE_TIME).timeout
-	if chunks.has(coords) and chunks[coords].d55727675escending:
+	if chunks.has(coords) and chunks[coords].descending:
 		# destroy if hasn't undestroyed yet
 		chunks[coords].queue_free()
 		chunks.erase(coords)
-
-
-func spawn_ocean_chunk(coords: Vector2i):
-	var ocean_chunk: Node3D = ocean_chunk_scene.instantiate()
-	ocean_chunk.position.x = coords.x * 4 * Chunk.WIDTH
-	ocean_chunk.position.z = -coords.y * 4 * Chunk.DEPTH
-	ocean_chunks[Vector2i(coords.x, coords.y)] = ocean_chunk
-	add_child(ocean_chunk)
-
-
-func destroy_ocean_chunk(coords: Vector2i):
-	if not ocean_chunks.has(coords):
-		return
-
-	ocean_chunks[coords].queue_free()
